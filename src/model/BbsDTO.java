@@ -16,12 +16,20 @@ public class BbsDTO {
 	private String visitcount;	//조회수
 	//멤버변수추가 : board와 member테이블의 join을 위해 name컬럼 추가
 	private String name;
+	private String bname;
+	
 	//getter/setter
 	public String getNum() {
 		return num;
 	}
 	public String getName() {
 		return name;
+	}
+	public String getBname() {
+		return bname;
+	}
+	public void setBname(String bname) {
+		this.bname = bname;
 	}
 	public void setName(String name) {
 		this.name = name;

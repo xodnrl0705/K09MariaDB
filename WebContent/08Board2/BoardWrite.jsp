@@ -2,6 +2,14 @@
     pageEncoding="UTF-8"%>  
 <%-- 글작성 페이지 진입전 로그인 체크하기 --%>  
 <%@ include file="../common/isLogin.jsp" %>
+<%@ include file="../common/isFlag.jsp" %>
+<%
+//자유게시판, 질문과답변만 글쓰기 가능함.
+if(!(bname.equals("freeboard")|| bname.equals("qna"))){
+	JavascriptUtil.jsAlertBack("해당 게시판은 글쓰기를 할수없습니다.",out);
+	return;
+}
+%>  
 <!DOCTYPE html>
 <html lang="en">
 <jsp:include page="../common/boardHead.jsp" />
@@ -38,7 +46,7 @@ var checkValidate2 = function(frm){
 			<div class="row mt-3 mr-1">
 				<table class="table table-bordered table-striped">
 				<form name="writeFrm" method="post" action="WriteProc.jsp" onsubmit="return checkValidate(this);">
-				
+				<input type="hidden" name = "bname" value = "<%=bname %>" />
 				<colgroup>
 					<col width="20%"/>
 					<col width="*"/>

@@ -70,14 +70,15 @@ public class BbsDAO {
 			 	입력하는것보다 쿼리에서 제외시켜 주는것이 좋다.
 			*/
 			String query = "INSERT INTO board ( "
-					+ " title,content,id,visitcount) "
+					+ " title,content,id,visitcount,bname) "
 					+ " VALUES ( "
-					+ " ?, ?, ?, 0)";
+					+ " ?, ?, ?, 0, ?)";
 			
 			psmt = con.prepareStatement(query);
 			psmt.setString(1, dto.getTitle());
 			psmt.setString(2, dto.getContent());
 			psmt.setString(3, dto.getId());
+			psmt.setString(4, dto.getBname());
 			
 			affected = psmt.executeUpdate();
 			
@@ -110,11 +111,12 @@ public class BbsDAO {
 		int totalCount = 0;
 		
 		//기본쿼리문(전체레코드를 대상으로 함)
-		String query = "SELECT COUNT(*) FROM board";
+		String query = "SELECT COUNT(*) FROM board"
+				+	" WHERE bname = '" + map.get("bname") +"'";
 		
 		//JSP페이지에서 검색어를 입력한 경우 where절이 동적으로 추가됨.
 		if(map.get("Word")!=null) {
-			query += " WHERE "+map.get("Column") + " "
+			query += " AND "+map.get("Column") + " "
 					+ " LIKE '%"+ map.get("Word") +"%'";
 		}
 		System.out.println("query="+query);
@@ -180,14 +182,12 @@ public class BbsDAO {
 	public List<BbsDTO> selectListPage(Map<String, Object> map){
 		List<BbsDTO> bbs = new Vector<BbsDTO>();
 
-		String query = " "
-				+"		SELECT * FROM board ";
+		String query = "SELECT * FROM board WHERE bname='" + map.get("bname")+"'";
 		if(map.get("Word")!=null) {
-			query += " WHERE "+ map.get("Column") +" "
-					+" LIKE '%"+map.get("Word") +"%' ";
+			query += " AND " + map.get("Column") +" "
+					+" LIKE '%" + map.get("Word") +"%' ";
 		}
-		query += " "
-				+"		ORDER BY num DESC LIMIT ?, ? ";
+		query += "	ORDER BY num DESC LIMIT ?, ? ";
 		System.out.println("쿼리문:"+query);
 		try {
 			psmt = con.prepareStatement(query);

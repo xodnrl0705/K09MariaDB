@@ -5,6 +5,7 @@
     pageEncoding="UTF-8"%>
 <%-- 파일명 : DeleteProc.jsp --%>
 <%@ include file="../common/isLogin.jsp" %>
+<%@ include file="../common/isFlag.jsp" %>
 <%
 //한글처리 안해도됨(삭제만 하면 되므로)
 //request.setCharacterEncoding("UTF-8");
@@ -31,7 +32,7 @@ else{
 }
 if(affected==1){
 	JavascriptUtil.jsAlertLocation("삭제되었습니다",
-			"BoardList.jsp",out);
+			"BoardList.jsp?bname=" + bname , out);
 }
 else{
 	out.println(JavascriptUtil.jsAlertBack("삭제실패하였습니다."));

@@ -193,3 +193,5 @@ SELECT * FROM board WHERE bname = 'freeboard';
 -- 공지사항 리스트 보기
 SELECT * FROM board WHERE bname = 'notice';
 
+INSERT INTO board (title, content, id, bname)
+	VALUES('여긴 공지사항', '내용없음', 'kosmo', 'notice');

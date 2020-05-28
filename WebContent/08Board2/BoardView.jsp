@@ -2,17 +2,18 @@
 <%@page import="model.BbsDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ include file = "../common/isFlag.jsp" %><!-- 필수파라미터 체크로직  -->
 <%
 /*
 검색후 파라미터 처리를 위한 추가부분
 	: 리스트에서 검색후 상세보기 , 그리고 다시 리스트보기를 
 	눌렀을때 검색이 유지되도록 처리하기위한 코드삽입
 */
-String queryStr = "";
+String queryStr = "bname="+bname+"&";
 String searchColumn  = request.getParameter("searchColumn");
 String searchWord  = request.getParameter("searchWord");
 if(searchWord!=null){
-	queryStr = "searchColumn=" + searchColumn+"&searchWord="+searchWord+"&";
+	queryStr += "searchColumn=" + searchColumn+"&searchWord="+searchWord+"&";
 }
 //3페이지에서 상세보기했다면 리스트로 돌아갈때도 3페이지로 가야한다.
 String nowPage = request.getParameter("nowPage");
@@ -41,7 +42,7 @@ dao.close();
 	<div class="row">		
 		<jsp:include page="../common/boardLeft.jsp" />
 		<div class="col-9 pt-3">
-			<h3>게시판 - <small>View(상세보기)</small></h3>
+			<h3><%=boardTitle %> - <small>View(상세보기)</small></h3>
 						
 			<div class="row mt-3 mr-1">
 				<table class="table table-bordered">
@@ -103,7 +104,7 @@ dao.close();
 					<!-- 수정, 삭제의 경우 특정게시물에 대해 수행하는 작업이므로 반드시
 					게시물의 일련번호(PK)가 파라미터로 전달되어야 한다. -->
 					<button type="button" class="btn btn-secondary"
-						onclick="location.href='BoardEdit.jsp?num=<%=dto.getNum()%>';">수정하기</button>
+						onclick="location.href='BoardEdit.jsp?num=<%=dto.getNum()%>&bname=<%=bname%>';">수정하기</button>
 					<!-- 회원제게시판에서 삭제처리는 별도의 폼이 필요없이, 사용자에대한
 					인증처리만 되면 즉시 삭제처리한다. -->
 					<button type="button" class="btn btn-success"
@@ -123,6 +124,7 @@ dao.close();
 				-->
 				<form name="deleteFrm">
 					<input type="hidden" name="num" value="<%=dto.getNum() %>" />
+					<input type="hidden" name="bname" value="<%=bname %>" />
 				</form>
 				<script>
 					function isDelete() {

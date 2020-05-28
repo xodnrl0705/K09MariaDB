@@ -1,3 +1,4 @@
+<%@page import="util.JavascriptUtil"%>
 <%@page import="util.PagingUtil"%> 
 <%@page import="model.BbsDTO"%>
 <%@page import="java.util.List"%>
@@ -6,9 +7,12 @@
 <%@page import="model.BbsDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ include file = "../common/isFlag.jsp" %><!-- 필수파라미터 체크로직  -->
+
 <%
 //한글깨짐처리 - 검색폼에서 입력된 한글이 전송되기때문
 request.setCharacterEncoding("UTF-8");
+
 
 /* DB연결하기 */
 //1.web.xml에 저장된 컨텍스트 초기화 파라미터를 application객체를 통해 가져옴
@@ -22,8 +26,20 @@ BbsDAO dao = new BbsDAO(drv,url);
 있는경우 한꺼번에 저장한 후 DAO로 전달할것임.
 */
 Map<String,Object> param = new HashMap<String,Object>();
+
+//필수파라미터인 bname을 DAO로 전달하기위해 Map컬렉션에 저장한다.
+param.put("bname",bname);
+
 //폼값을 받아서 파라미터를 저장할변수 생성
 String queryStr = "";//검색시 페이지번호로 쿼리스트링을 넘겨주기 위한 용도(url부분에 뜬다.)
+
+
+//필수파라미터에 대한 쿼리스트링 처리
+queryStr = "bname=" + bname + "&";
+
+
+
+
 //검색어 입력시 전송된 폼값을 받아 Map에 저장
 String searchColumn = request.getParameter("searchColumn");
 String searchWord = request.getParameter("searchWord");
@@ -32,7 +48,7 @@ if(searchWord!=null){
 	param.put("Column", searchColumn);
 	param.put("Word", searchWord);
 	//검색어가 있을때 쿼리스트링을 만들어준다.
-	queryStr = "searchColumn=" +searchColumn + "&searchWord=" +searchWord+ "&";
+	queryStr += "searchColumn=" +searchColumn + "&searchWord=" +searchWord+ "&";
 }
 
 //board테이블에 입력된 전체 레코드 갯수를 카운트하여 반환받음
@@ -83,10 +99,11 @@ dao.close();
 	<div class="row">		
 		<jsp:include page="../common/boardLeft.jsp"/>
 		<div class="col-9 pt-3">
-			<h3>게시판 - <small>이런저런 기능이 있는 게시판입니다.</small></h3>
+			<h3><%=boardTitle %> - <small>이런저런 기능이 있는 게시판입니다.</small></h3>
 			<div class="row">
 			<!-- 검색부분 -->
 			<form class="form-inline ml-auto" name="searchFrm" method="get">	
+				<input type="hidden" name="bname" value="<%=bname %>"/> <!--검색시 필수파라미터인 bname이 전달되어야한다.  -->
 				<div class="form-group">
 					<select name="searchColumn" class="form-control">
 						<option value="title">제목</option>
@@ -181,25 +198,17 @@ dao.close();
 			</div>
 			<div class="row">
 				<div class="col text-right">
-					<!-- 각종 버튼 부분 -->
-					<!-- <button type="button" class="btn">Basic</button> -->
+				<% if(bname.equals("freeboard")|| bname.equals("qna")){ %><!-- 자유게시판과 질문과답변에서만 글쓰기버튼 보임처리 -->
 					<button type="button" class="btn btn-primary"
-						onclick="location.href='BoardWrite.jsp';">글쓰기</button>
-					<!-- <button type="button" class="btn btn-secondary">수정하기</button>
-					<button type="button" class="btn btn-success">삭제하기</button>
-					<button type="button" class="btn btn-info">답글쓰기</button>
-					<button type="button" class="btn btn-warning">리스트보기</button>
-					<button type="button" class="btn btn-danger">전송하기</button>
-					<button type="button" class="btn btn-dark">Reset</button>
-					<button type="button" class="btn btn-light">Light</button>
-					<button type="button" class="btn btn-link">Link</button> -->
+						onclick="location.href='BoardWrite.jsp?bname=<%=bname%>';">글쓰기</button>
+				<% } %>
 				</div>
 			</div>
 			<div class="row mt-3">
 				<div class="col">
 					<!-- 페이지번호 부분 -->
 					<ul class="pagination justify-content-center">
-						<%=PagingUtil.pagingBS4(totalRecordCount, pageSize, blockPage, nowPage, "BoardList.jsp?"+queryStr) %>
+						<%=PagingUtil.pagingBS4(totalRecordCount, pageSize, blockPage, nowPage, "BoardList.jsp?"+queryStr) %> 
 					</ul>
 				</div>				
 			</div>		
